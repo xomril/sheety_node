@@ -67,6 +67,35 @@ This is a simple Node.js application using the Express framework and Axios for m
       curl -X POST http://localhost:3000/update/2/3/Hello
       ```
       
+## App script
+copy and paste this to your app script file:
+    ```sh
+    var SHEET = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
+
+function doGet(e) {
+  var row = e.parameter.row
+  var col = e.parameter.col
+  var txt = e.parameter.txt
+
+  
+  var JSONString = JSON.stringify(SHEET.getRange(row, col).getValue());
+  var JSONOutput = ContentService.createTextOutput(JSONString);
+  JSONOutput.setMimeType(ContentService.MimeType.JSON);
+  return JSONOutput
+
+}
+
+function doPost(e) {
+  var postData = JSON.parse(e.postData.contents);
+  var row = postData.row;
+  var col = postData.col;
+  var txt = postData.txt;
+  SHEET.getRange(row, col).setValue(txt)
+  var res = {
+    "status": "updated",
+    "data": postData
+  }```
+  
 ## Notes
 - Ensure the `.env` file is correctly configured with the `SHEET` URL.
 - The application uses environment variables, so make sure to restart the server after any changes to the `.env` file.
